@@ -16,6 +16,9 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+# Version: 0.11
+# Updated for Python 3
+
 # Commentary:
 
 # This is a basic program which enables one to keep track of a series of
@@ -40,14 +43,14 @@ os.chdir(path)
 
 # Print out the account that has been selected, nicely.
 def print_acct_sel_msg(account, account_dict):
-    print "You have selected account " + account + ": " \
-        + account_dict[account] + "."
+    print("You have selected account " + account + ": " \
+        + account_dict[account] + ".")
 
 
 # Print out the account's balance, nicely.
 def print_acct_balance(acct):
-    print "The balance of account " + str(acct) + " is " \
-        + dollar_fmt(summarize_one(acct)) + "."
+    print("The balance of account " + str(acct) + " is " \
+        + dollar_fmt(summarize_one(acct)) + ".")
 
 
 # Return a formatted string with a dollar amount.
@@ -64,17 +67,17 @@ def dollar_fmt(num):
 # Print the transaction data nicely.
 def trans_print(year, month, day, hour, minute, acct_num, acct_name,
                 dollars_fmt, desc):
-    print year + '/' + month + '/' + day \
+    print(year + '/' + month + '/' + day \
         + '{:.>32}'.format("Acct_" + acct_num + "_" + acct_name) \
         + '{:.>14}'.format(dollars_fmt) \
-        + '...' + desc
+        + '...' + desc)
 
 
 # Return the index of the sublist whose first element
 # is equal to the given number.
 def index2d(lst, given):
     found = False
-    for i in range(len(lst)):
+    for i in list(range(len(lst))):
         if (lst[i][0] == given):
             found = True
             answer = i
@@ -87,25 +90,26 @@ def index2d(lst, given):
 # Takes a list of lists (essentially a two dimensional array)
 # Prints it nicely, tab delimited.
 def summ_nice_print(lst):
-    for i in range(len(lst)):
+    for i in list(range(len(lst))):
         dollars = dollar_fmt(lst[i][2])
-        print '{:.<5}'.format(str(lst[i][0])) \
-            + '{:.>22}'.format(lst[i][1]) + '{:.>14}'.format(dollars)
+        print('{:.<5}'.format(str(lst[i][0])) \
+            + '{:.>22}'.format(lst[i][1]) + '{:.>14}'.format(dollars))
 
 
 def summ_grand_total(lst):
     total = 0
-    for i in range(len(lst)):
+    for i in list(range(len(lst))):
         total += lst[i][2]
     return total
 
 
 def get_accounts():
-    with open('accounts', 'rb') as f:
+    # with open('accounts', 'rb') as f:
+    with open('accounts', 'r', newline = '') as f:
         acct_file = list(csv.reader(f, delimiter='\t'))
         # Use a dictionary to store the accounts and their names.
         acct_def = {}
-        for i in range(len(acct_file)):
+        for i in list(range(len(acct_file))):
             # Handle the account definition rows first.
             if (len(acct_file[i]) == 1):
                 # acct_file[i] is an account definition.
@@ -122,7 +126,8 @@ def get_accounts():
 
 
 def get_data(choice, val):
-    with open('transactions', 'rb') as f:
+    # with open('transactions', 'rb') as f:
+    with open('transactions', 'r', newline = '') as f:
         acct_file = list(csv.reader(f, delimiter='\t'))
         ##########
         #    print(acct_file[1000])
@@ -132,7 +137,7 @@ def get_data(choice, val):
         #        credits > 0, debits < 0.
         #    print(acct_file[1000][3]) has the description.
         ##########
-        #    for i in range(len(acct_file)):
+        #    for i in list(range(len(acct_file))):
         #        lengths.append(len(acct_file[i]))
         #    print(set(lengths))
         ##########
@@ -141,7 +146,7 @@ def get_data(choice, val):
         wanted_acct_num = val[0]
         wanted_dollars = val[1]
         # process the data
-        for i in range(len(acct_file)):
+        for i in list(range(len(acct_file))):
             # Handle the rows with transaction data.
             if (len(acct_file[i]) == 4):
                 # assign date and time
@@ -193,7 +198,8 @@ def get_data(choice, val):
 # The intention is to give a total balance for each account
 # in a compact manner.
 def summarize():
-    with open('transactions', 'rb') as f:
+    # with open('transactions', 'rb') as f:
+    with open('transactions', 'r', newline = '') as f:
         acct_file = list(csv.reader(f, delimiter='\t'))
         acct_def = get_accounts()
         # store dictionary in list of lists.
@@ -203,9 +209,9 @@ def summarize():
         # element 3 of each sublist: total dollars for that account
         #     (initially set to zero)
         summ_list = []
-        for i in range(len(acct_def)):
+        for i in list(range(len(acct_def))):
             list_to_add = []
-            single_key = acct_def.keys()[i]
+            single_key = list(acct_def.keys())[i]
             # first element of sublist
             list_to_add.append(int(single_key))
             # second element of sublist
@@ -220,7 +226,7 @@ def summarize():
         # find the summary array sublist index
         # which matches the account number on this row
         # increment its third element by the dollars on this row
-        for i in range(len(acct_file)):
+        for i in list(range(len(acct_file))):
             if (len(acct_file[i]) == 4):
                 # assign account number
                 acct_num = int(acct_file[i][1])
@@ -228,11 +234,11 @@ def summarize():
                 dollars = float(acct_file[i][2])
                 sublist_to_edit = index2d(summ_list, acct_num)
                 summ_list[sublist_to_edit][2] += dollars
-        for i in range(len(summ_list)):
+        for i in list(range(len(summ_list))):
             summ_list[i][2] = round(summ_list[i][2], 2)
-        print "SUMMARY OF TRANSACTIONS"
+        print("SUMMARY OF TRANSACTIONS")
         summ_nice_print(summ_list)
-        print "The grand total is: " + dollar_fmt(summ_grand_total(summ_list))
+        print("The grand total is: " + dollar_fmt(summ_grand_total(summ_list)))
 #        pprint(summ_list)
     f.close()
 
@@ -243,14 +249,15 @@ def summarize():
 # The intention is to give a total balance
 # for each account in a compact manner.
 def summarize_one(wanted_acct):
-    with open('transactions', 'rb') as f:
+    # with open('transactions', 'rb') as f:
+    with open('transactions', 'r', newline = '') as f:
         acct_file = list(csv.reader(f, delimiter='\t'))
         total = 0
         # for each line of transaction data
         # if the row doesn't pertain to the wanted account,
         # ignore it and move on.
         # if the row does pertain, add its dollar amount to the total.
-        for i in range(len(acct_file)):
+        for i in list(range(len(acct_file))):
             # assign account number
             acct_num = int(acct_file[i][1])
             if (acct_num == int(wanted_acct)):
@@ -270,7 +277,8 @@ def debit(acct_to_debit, amt_to_debit, desc):
     # from the account balance.
     amt_to_debit_formatted = -1 * amt_to_debit
     # open file & append to it (using w would overwrite the entire file)
-    with open('transactions', mode='ab') as f:
+    # with open('transactions', mode='ab') as f:
+    with open('transactions', mode='a', newline = '') as f:
         acct_file = csv.writer(f, delimiter='\t')
         acct_file.writerow([current_date_time, acct_to_debit,
                             amt_to_debit_formatted, desc])
@@ -282,7 +290,8 @@ def credit(acct_to_credit, amount_to_credit, desc):
     #     + -(amount_to_credit) + '\t' + desc
     current_date_time = time.strftime("%Y%m%d%H%M")
     # open file & append to it (using w would overwrite the entire file)
-    with open('transactions', mode='ab') as f:
+    # with open('transactions', mode='ab') as f:
+    with open('transactions', mode='a', newline = '') as f:
         acct_file = csv.writer(f, delimiter='\t')
         acct_file.writerow([current_date_time, acct_to_credit,
                             amount_to_credit, desc])
@@ -305,7 +314,8 @@ def transfer(account_to_transfer_from, account_to_transfer_to,
 
 
 def create_new_account(number, name):
-    with open('accounts', mode='ab') as f:
+    # with open('accounts', mode='ab') as f:
+    with open('accounts', mode='a', newline = '') as f:
         acct_file = csv.writer(f, delimiter='\t')
         new_row = "ACCOUNT " + number + ": " + name
         acct_file.writerow([new_row])
@@ -314,7 +324,7 @@ def create_new_account(number, name):
 
 def menu(q):
     acct_def = get_accounts()
-    ch = raw_input("\nEnter input choice:  \n"
+    ch = input("\nEnter input choice:  \n"
                    + "(d) Make a debit \n"
                    + "(c) Make a credit \n"
                    + "(t) Make a transfer \n"
@@ -328,71 +338,71 @@ def menu(q):
                    + "> ")
     if (ch == 'qa'):
         val = []
-        val.append(raw_input('Enter the account number: '))
+        val.append(input('Enter the account number: '))
         val.append(None) # zero dollars
         get_data(ch, val)
     elif (ch == 'qd'):
         val = []
         val.append(None) # null account
-        val.append(float(raw_input('Enter the dollar amount with no dollar sign: ')))
+        val.append(float(input('Enter the dollar amount with no dollar sign: ')))
         get_data(ch, val)
         # print(str(val) + " as data type float is " + str(val_float))
     elif (ch == 'qad'):
         val = []
-        val.append(raw_input('Enter the account number: '))
-        val.append(float(raw_input('Enter the dollar amount with no dollar sign: ')))
+        val.append(input('Enter the account number: '))
+        val.append(float(input('Enter the dollar amount with no dollar sign: ')))
         get_data(ch, val)
     elif (ch == 's'):
         summarize()
     # elif (ch == 'r'):
         # print_trans_recent(30)    
     elif (ch == 'd'):
-        acct_to_debit = raw_input("Enter account which you want to debit: ")
+        acct_to_debit = input("Enter account which you want to debit: ")
         print_acct_sel_msg(acct_to_debit, acct_def)
-        amt_to_debit = float(raw_input("Enter the amount to debit: "))
-        desc_for_debit = raw_input("Enter a description for the debit: ")
+        amt_to_debit = float(input("Enter the amount to debit: "))
+        desc_for_debit = input("Enter a description for the debit: ")
         debit(acct_to_debit, amt_to_debit, desc_for_debit)
         print_acct_balance(acct_to_debit)
     elif (ch == 'c'):
-        acct_to_credit = raw_input("Enter account which you want to credit: ")
+        acct_to_credit = input("Enter account which you want to credit: ")
         print_acct_sel_msg(acct_to_credit, acct_def)
-        amount_to_credit = float(raw_input("Enter the amount to credit: "))
-        desc_for_credit = raw_input("Enter a description for the credit: ")
+        amount_to_credit = float(input("Enter the amount to credit: "))
+        desc_for_credit = input("Enter a description for the credit: ")
         credit(acct_to_credit, amount_to_credit, desc_for_credit)
         print_acct_balance(acct_to_credit)
     elif (ch == 't'):
-        acct_to_xfer_from = raw_input("Enter account "
+        acct_to_xfer_from = input("Enter account "
                                       + "which you want to transfer FROM: ")
         print_acct_sel_msg(acct_to_xfer_from, acct_def)
-        acct_to_xfer_to = raw_input("Enter account "
+        acct_to_xfer_to = input("Enter account "
                                     + "which you want to transfer TO: ")
         print_acct_sel_msg(acct_to_xfer_to, acct_def)
-        amt_to_xfer = float(raw_input("Enter the amount to transfer: "))
-        desc_for_xfer = raw_input("Enter a description for the transfer: ")
-        print "Before transfer, \taccount " + str(acct_to_xfer_from) \
+        amt_to_xfer = float(input("Enter the amount to transfer: "))
+        desc_for_xfer = input("Enter a description for the transfer: ")
+        print("Before transfer, \taccount " + str(acct_to_xfer_from) \
             + " balance = " + dollar_fmt(summarize_one(acct_to_xfer_from)) \
             + "\t & account " + str(acct_to_xfer_to) + " balance = " \
-            + dollar_fmt(summarize_one(acct_to_xfer_to)) + "."
+            + dollar_fmt(summarize_one(acct_to_xfer_to)) + ".")
         transfer(acct_to_xfer_from, acct_to_xfer_to, amt_to_xfer,
                  desc_for_xfer)
-        print "After transfer, \taccount " + str(acct_to_xfer_from) \
+        print("After transfer, \taccount " + str(acct_to_xfer_from) \
             + " balance = " + dollar_fmt(summarize_one(acct_to_xfer_from)) \
             + "\t & account " + str(acct_to_xfer_to) + " balance = " \
-            + dollar_fmt(summarize_one(acct_to_xfer_to)) + "."
+            + dollar_fmt(summarize_one(acct_to_xfer_to)) + ".")
     elif (ch == 'cna'):
-        new_account_number = raw_input("Enter new account number: ")
-        # print type(new_account_number)
+        new_account_number = input("Enter new account number: ")
+        # print(type(new_account_number))
         # while (type(new_account_number) != int):
-        # print "You must enter a positive whole number."
-        # new_account_number = raw_input("Enter new account number: ")
-        new_account_name = raw_input("Enter new account name: ")
-        # print type(new_account_number)
+        # print("You must enter a positive whole number.")
+        # new_account_number = input("Enter new account number: ")
+        new_account_name = input("Enter new account name: ")
+        # print(type(new_account_number))
         # while (type(new_account_name) != str):
-        # print "You must enter an alphabetical name."
-        # new_account_name = raw_input("Enter new account name: ")
+        # print("You must enter an alphabetical name.")
+        # new_account_name = input("Enter new account name: ")
         create_new_account(new_account_number, new_account_name)
     elif (ch == 'q'):
-        print "Bye!"
+        print("Bye!")
     # experimental
     # elif (ch == 'tf'):
         # write_tf()
@@ -437,5 +447,5 @@ else:
         transfer(acct_to_xfer_from, acct_to_xfer_to, amt_to_xfer,
                  desc_for_xfer)
     else:
-        print "Invalid entry."
+        print("Invalid entry.")
 
